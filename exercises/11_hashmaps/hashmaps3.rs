@@ -15,6 +15,20 @@ struct TeamScores {
     goals_conceded: u8,
 }
 
+struct Team {
+    team_name: String,
+    team_scores: TeamScores
+}
+impl Team {
+    pub fn new(team_name: &str, team_scores: TeamScores) -> Self {
+        let team_name = String::from(team_name);
+        Self {
+            team_name,
+            team_scores
+        }
+    }
+}
+
 fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
     // The name of the team is the key and its associated struct is the value.
     let mut scores = HashMap::new();
@@ -31,6 +45,18 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+
+        // Update team 1's scores
+        scores
+            .entry(team_1_name)
+            .and_modify(|team| {
+                team.goals_scored += team_1_score;
+                team.goals_conceded += team_2_score;
+            })
+            .or_insert_with_key(|name| {
+                name.
+            });
+
     }
 
     scores
@@ -45,13 +71,18 @@ mod tests {
     use super::*;
 
     const RESULTS: &str = "England,France,4,2
-France,Italy,3,1
-Poland,Spain,2,0
-Germany,England,2,1
-England,Spain,1,0";
+        France,Italy,3,1
+        Poland,Spain,2,0
+        Germany,England,2,1
+        England,Spain,1,0";
 
     #[test]
     fn build_scores() {
+        let mut basket = HashMap::new();
+        basket.insert(String::from("banana"), 2);
+        basket.insert(String::from("apple"), 2);
+        basket.insert(String::from("mango"), 2);
+
         let scores = build_scores_table(RESULTS);
 
         assert!(["England", "France", "Germany", "Italy", "Poland", "Spain"]
